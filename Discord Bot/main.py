@@ -211,4 +211,4 @@ async def on_command_error(ctx,error):
              await ctx.send(msg)
 
 
-bot.run('ODg4Mzc4MDUyNjkyODA3NzIw.YUR0iQ.gevlZ-6eCHGen1ZoSBfvonkjht8')
+bot.run('TOKEN')
