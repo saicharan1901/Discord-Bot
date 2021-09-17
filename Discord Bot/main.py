@@ -5,11 +5,11 @@ import aiohttp
 import random
 import json
 
-bot = commands.Bot(command_prefix = ["p!"])
+bot = commands.Bot(command_prefix = ["g!"])
 
 @bot.event
 async def on_ready():
-  await bot.change_presence(activity=discord.Game(name="p!help"))
+  await bot.change_presence(activity=discord.Game(name="g!help"))
   print('Logged in Succesfully')
 
 determine_flip = ['h', 't']
@@ -25,12 +25,12 @@ async def coinflip(ctx,message,message1:int):
 
   
   if random.choice(determine_flip) == message:
-        embed = discord.Embed(title="Toss", description=f"{ctx.author.mention} Flipped coin, YOU **WONN**! {money} coins")
+        embed = discord.Embed(title="Toss", description=f"{ctx.author.mention} Flipped coin, YOU **WONN**! **{money} coins**")
         users[str(user.id)]["Wallet"] += money
         await ctx.send(embed=embed)
 
   else:
-        embed = discord.Embed(title="Toss", description=f"{ctx.author.mention} Flipped coin, YOU **LOST**!")
+        embed = discord.Embed(title="Toss", description=f"{ctx.author.mention} Flipped coin, YOU **LOST**! **{money} coins**")
         users[str(user.id)]["Wallet"] -= money
         await ctx.send(embed=embed)    
 
@@ -166,7 +166,7 @@ async def give(ctx,member: discord.Member,amount = None):
     await update_bank(ctx.author,-1*amount)
     await update_bank(member,amount)
 
-    await ctx.send("gave"+ " "+"<@"+f"{member.id}"+">"+" "+ f"{amount} coins")
+    await ctx.send("You gave"+ " "+"<@"+f"{member.id}"+">"+" "+ f"{amount} coins")
 
 async def update_bank(user, change = 0,mode = "Wallet"):
     users = await get_bank_data()
@@ -180,4 +180,35 @@ async def update_bank(user, change = 0,mode = "Wallet"):
     return bal
 
 
-bot.run(os.environ['Token'])
+@bot.command(case_insensitive=True)
+@commands.cooldown(1, 100, commands.BucketType.user)
+async def loot(ctx):
+    await open_account(ctx.author)
+
+    users = await get_bank_data()
+
+    user = ctx.author
+
+    earning = random.randrange(0,1000)
+    
+
+    if earning<=50:
+      await ctx.send(f"**You got {earning} coins.** Couldn't loot more. Try again Next time."+ " "+ "<@"+ f"{ctx.author.id}"+ ">")
+
+    else:
+      await ctx.send(f"You found a chest containing **{earning} coins :money_mouth:**" + " " + "<@"+ f"{ctx.author.id}"+ ">")
+    
+    users[str(user.id)]["Wallet"] += earning
+    
+
+    with open("bank.json","w") as f:
+        json.dump(users,f)
+
+@bot.event
+async def on_command_error(ctx,error):
+       if isinstance(error, commands.CommandOnCooldown):
+             msg = '**Still on cooldown**, please try again in {:.2f} seconds'.format(error.retry_after)
+             await ctx.send(msg)
+
+
+bot.run('ODg4Mzc4MDUyNjkyODA3NzIw.YUR0iQ.gevlZ-6eCHGen1ZoSBfvonkjht8')
