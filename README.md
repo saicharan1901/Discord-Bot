@@ -2,4 +2,4 @@
 Gambling Bot
 
 ## Contributers :-
-1) (Yashwanth)[https://github.com/yashwanth05]
+1) [Yashwanth](https://github.com/yashwanth05)
